@@ -483,6 +483,14 @@ static void crsfWriteParam(uint8_t idx, uint8_t val) {
 
 // ======== Setup ======================================================
 void setup() {
+#ifdef PIN_VEXT
+    pinMode(PIN_VEXT, OUTPUT);
+    digitalWrite(PIN_VEXT, LOW); // LOW = Vext 3.3V-Stromversorgung aktiv (versorgt OLED & Vext-Pin)
+#endif
+#ifdef PIN_LED
+    pinMode(PIN_LED, OUTPUT);
+    digitalWrite(PIN_LED, LOW);
+#endif
     Serial.begin(115200);
     loadConfig();
 

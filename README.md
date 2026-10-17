@@ -1,22 +1,24 @@
-# Soundmodul Mini (S3)
+# Soundmodul Mini (Heltec V3 / S3)
 
-Kompaktes Soundmodul für Motorgeräusche und Effekte auf Basis ESP32-S3-Zero (ESP32-S3FH4R2, 4 MB Flash, 2 MB PSRAM).
+Kompaktes Soundmodul für Motorgeräusche und Effekte auf Basis **Heltec WiFi LoRa 32 V3** (ESP32-S3FN8, 8 MB Flash, kein externes PSRAM).
 Abgeleitet von [ESP32-RC-Sound V7](https://github.com/mnorden81/mnorden81-ESP32-Sound-bidirectional_code), reduziert auf:
 
 - **Eingang:** nur CRSF (Port A), busbasiert
 - **Sounds:** Motor (Start/Loop/Stopp) + 4 Zusatzsounds
 - **Speicher:** Flash (LittleFS), SD-Karte optional
-- **Ports:** Port A (CRSF), Port B (zweiter UART), Port C (GPS), alle als Hardware-UART
-- **Web-UI:** Sound-Upload und OTA-Update per WLAN
+- **Ports:** Port A (CRSF), Port B (zweiter UART), Port C (GPS)
+- **Web-UI:** Sound-Upload und OTA-Update per WLAN (AP über Onboard-PRG-Taster aktivierbar)
 - **Verstärker:** MAX98357A (I2S)
 
-**Aktuelle Version:** noch keine (Grundgerüst)
+**Aktuelle Version:** Grundgerüst angepasst für Heltec V3
 
-Projektplan: siehe `docs/`.
+Pinbelegung und Anschlussplan: siehe [docs/pinout.md](docs/pinout.md).
 
-## Flash-Aufteilung (4 MB)
+## Flash-Aufteilung (8 MB)
 
-2 × 1,25 MB Firmware (OTA) + ca. 1,3 MB Sounds (≈ 30 s bei 22,05 kHz, 16 Bit mono).
+Mit `partitions_8mb.csv`:
+- 2 × 2,5 MB Firmware (OTA)
+- ca. 2,87 MB Sounds im LittleFS (≈ 65 s bei 22,05 kHz, 16 Bit mono)
 
 ## Sounds
 
@@ -35,20 +37,20 @@ Sounds ins Flash bringen:
 
 Konfigurations-Backups liegen immer auf der SD-Karte.
 
-## Bauen
+## Bauen & Flashen
 
 ```bash
 cd firmware
-pio run                 # Firmware bauen
+pio run                 # Firmware bauen (Default: env heltec_v3)
 pio run -t upload       # flashen
 pio run -t uploadfs     # Sounds aus firmware/data/ ins Flash
 ```
 
 ## Ordner
 
-- `firmware/` PlatformIO-Projekt
+- `firmware/` PlatformIO-Projekt (`platformio.ini`, `partitions_8mb.csv`)
 - `hardware/` Schaltplan, PCB
-- `docs/` Pinout, Changelog
+- `docs/` Pinout (`docs/pinout.md`), Projektplan
 - `backups/` funktionierende Stände (nur lokal, nicht im Repo)
 
 ## Lizenz

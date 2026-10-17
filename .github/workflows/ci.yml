@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-firmware:
-    name: Build firmware (S3)
+    name: Build firmware (Heltec V3)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -33,9 +33,9 @@ jobs:
       - name: Merge flash image
         run: |
           pip install esptool==4.8.1
-          B=.pio/build/s3
-          esptool.py --chip esp32s3 merge_bin -o $B/sound-mini-s3-komplett.bin \
-            --flash_mode keep --flash_freq keep --flash_size 4MB \
+          B=.pio/build/heltec_v3
+          esptool.py --chip esp32s3 merge_bin -o $B/sound-mini-heltec-v3-komplett.bin \
+            --flash_mode keep --flash_freq keep --flash_size 8MB \
             0x0 $B/bootloader.bin \
             0x8000 $B/partitions.bin \
             0xe000 ~/.platformio/packages/framework-arduinoespressif32/tools/partitions/boot_app0.bin \
@@ -44,7 +44,7 @@ jobs:
       - name: Upload firmware
         uses: actions/upload-artifact@v4
         with:
-          name: sound-mini-s3-firmware
+          name: sound-mini-heltec-v3-firmware
           path: |
-            firmware/.pio/build/s3/sound-mini-s3-komplett.bin
-            firmware/.pio/build/s3/firmware.bin
+            firmware/.pio/build/heltec_v3/sound-mini-heltec-v3-komplett.bin
+            firmware/.pio/build/heltec_v3/firmware.bin

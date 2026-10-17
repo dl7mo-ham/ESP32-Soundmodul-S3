@@ -4,6 +4,7 @@
 
 #include "sound_store.h"
 #include "pins.h"
+#include <SPI.h>
 #include <SD.h>
 #include <LittleFS.h>
 
@@ -19,7 +20,12 @@ static constexpr uint8_t FLASH_MAX_FILES = 10;
 void soundStoreBegin(uint8_t wanted) {
     pinMode(PIN_SD_CS, OUTPUT);
     digitalWrite(PIN_SD_CS, HIGH);
+#if defined(PIN_SD_CLK) && defined(PIN_SD_MISO) && defined(PIN_SD_MOSI)
+    SPI.begin(PIN_SD_CLK, PIN_SD_MISO, PIN_SD_MOSI, PIN_SD_CS);
+    sdOk = SD.begin(PIN_SD_CS, SPI);
+#else
     sdOk = SD.begin(PIN_SD_CS);
+#endif
     if (sdOk && SD.cardType() == CARD_NONE) { SD.end(); sdOk = false; }
 
     // formatOnFail=true: eine leere oder beschaedigte Partition (z. B. nach
