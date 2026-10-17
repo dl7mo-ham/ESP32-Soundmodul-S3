@@ -70,6 +70,7 @@
 #include "gps_speed.h"
 #include "port_function.h"
 #include "sound_store.h"
+#include "display.h"
 
 uint16_t Version = 1;  // Firmware-Version fuer Web-/Lua-Anzeige: major*100+minor (1 -> "0.01")
 char versionString[6];
@@ -492,6 +493,7 @@ void setup() {
     digitalWrite(PIN_LED, LOW);
 #endif
     Serial.begin(115200);
+    displayInit();
     loadConfig();
 
     strncpy(ssid,    config.WiFi_SSID,    sizeof(ssid)-1);    ssid[sizeof(ssid)-1]='\0';
@@ -551,6 +553,17 @@ void setup() {
     if (PortC_GPS_Enabled_boot) gpsSpeedInit();
 
     Serial.printf("Soundmodul Mini %s (ESP32-S3)\n", versionString);
+
+    char ipStr[20] = "";
+    if (WebServerManager::isApActive()) {
+        snprintf(ipStr, sizeof(ipStr), "%s", WiFi.softAPIP().toString().c_str());
+    }
+    displayShowBoot(versionString,
+                    soundStoreName(),
+                    crsfAddrFromWM(),
+                    portBFunctionName((PortBMode)PortB_Mode_boot),
+                    WebServerManager::isApActive(),
+                    ipStr);
 }
 
 // Auto-WLAN-Failsafe: schaltet das WLAN ein, wenn eine Zeit lang kein
@@ -674,6 +687,30 @@ void loop() {
     throttle=ramp_throttle(throttle);
     if(config.Min_Speed_Sound_0!=config.Max_Speed_Sound_0)
         Sound_loop.Speed=floatMap(throttle,0,100,config.Min_Speed_Sound_0,config.Max_Speed_Sound_0)/100.0f;
+
+    // Display-Live-Status aktualisieren
+    {
+        const char* activeSound = nullptr;
+        for (uint8_t i = 1; i <= RCSOUND_NUM_SOUNDS; i++) {
+            if (Sound_play[i]) {
+                static char sndBuf[12];
+                snprintf(sndBuf, sizeof(sndBuf), "Sound %d", i);
+                activeSound = sndBuf;
+                break;
+            }
+        }
+        char ipBuf[20] = "";
+        if (WebServerManager::isApActive()) {
+            snprintf(ipBuf, sizeof(ipBuf), "%s", WiFi.softAPIP().toString().c_str());
+        }
+        displayUpdate(BUS_OK,
+                      engine_State,
+                      throttle,
+                      activeSound,
+                      WebServerManager::isApActive(),
+                      ipBuf,
+                      portBFunctionName((PortBMode)PortB_Mode_boot));
+    }
 }
 
 // ======== Sound ======================================================

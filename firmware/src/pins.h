@@ -45,6 +45,9 @@
 #define PIN_WIFI        0    // Onboard PRG-Taster (LOW beim Einschalten = AP-Modus)
 #define PIN_VEXT        36   // Vext Power Switch (LOW = aktiv, versorgt OLED & Vext)
 #define PIN_LED         35   // Onboard Status-LED
+#define PIN_OLED_SDA    17   // Onboard OLED SDA (I2C)
+#define PIN_OLED_SCL    18   // Onboard OLED SCL (I2C)
+#define PIN_OLED_RST    21   // Onboard OLED Reset (Active LOW)
 
 // ── Port A: CRSF (Hardware-UART, Serial2) ────────────────────────────
 #define PIN_CRSF_RX     5
